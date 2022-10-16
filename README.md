@@ -1,1 +1,1 @@
-# TPPT-sim
+# TPPTsim
