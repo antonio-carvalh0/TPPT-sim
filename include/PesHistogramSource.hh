@@ -19,7 +19,8 @@ struct PesDataRecord
 class PesHistogramSource : public SourceModeBase
 {
 public:
-    PesHistogramSource(const std::string & directory, double multiplier);
+    PesHistogramSource(int iso, const std::string & directory, double multiplier);
+    PesHistogramSource(int iso, const std::string & directory, double multiplier, double blur);
     PesHistogramSource(const json11::Json & json);
 
     void GeneratePrimaries(G4Event * anEvent) override;
@@ -33,11 +34,15 @@ protected:
     void doReadFromJson(const json11::Json & json);
 
     void init();
+    void init2();
 
     void checkInputData();
 
+    int Iso=0;
     std::string Directory;
     double Multiplier;
+    double Blur=0;
+
 
     std::vector<PesDataRecord> IsotopeBase;
     size_t CurrentRecord = 0;
@@ -48,6 +53,8 @@ protected:
     GeantParticleGenerator ParticleGenerator;
 
     const double TimeSpan = 1e9;
+
+
 };
 
 #endif // peshistogramsource_h

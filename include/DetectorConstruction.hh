@@ -8,6 +8,7 @@ class G4VPhysicalVolume;
 class G4LogicalVolume;
 class G4VSolid;
 class G4Material;
+class G4Box;
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -25,6 +26,8 @@ private:
     void addPCB();
     void addCopperStructure();
     void addCoolingAssemblies();
+    void addVerticalPhantom();
+    void addHorizontalPhantom();
 
     G4LogicalVolume * createAssembly(int & iScint, G4RotationMatrix * AssemblyRot, G4ThreeVector AssemblyPos, double Angle, int headNumber, int iAssembly);
     void positionAssembly(G4RotationMatrix * rot, G4ThreeVector pos, double angle, int & iScint, int iAssembly, int headNumber);
@@ -42,6 +45,17 @@ private:
     G4Material * CopperStructMat = nullptr;
     G4Material * CopperPipeMat   = nullptr;
     G4Material * WaterPipeMat    = nullptr;
+    G4Material * Bone            = nullptr;
+    G4Material * Brain           = nullptr;
+
+    G4VSolid * solidBone  = nullptr;
+    G4VSolid * solidBrain = nullptr;
+
+    G4LogicalVolume * logicalBone  = nullptr;
+    G4LogicalVolume * logicalBrain = nullptr;
+
+    G4VPhysicalVolume * physBone  = nullptr;
+    G4VPhysicalVolume * physBrain = nullptr;
 
     G4LogicalVolume * logicWorld = nullptr;
     G4LogicalVolume * logicScint = nullptr;

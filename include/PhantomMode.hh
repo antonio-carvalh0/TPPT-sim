@@ -50,7 +50,7 @@ public:
 class PhantomCustomBox : public PhantomModeBase
 {
 public:
-    enum EMaterial {PMMA, HDPE, PE, Graphite, GelTissue, GelWater, Bone, Brain, Blood, Muscle, Tissue};
+    enum EMaterial {PMMA, HDPE, PE, Graphite, GelTissue, GelWater, Bone, Brain, Blood, Muscle, Tissue, Water};
 
     PhantomCustomBox(double sizeX, double sizeY, double sizeZ, EMaterial material);
     PhantomCustomBox(){}
@@ -155,4 +155,17 @@ public:
     G4LogicalVolume * definePhantom(G4LogicalVolume * logicWorld) override;
 };
 
+class PhantomBoneBrainHorizontal : public PhantomModeBase
+{
+public:
+    std::string getTypeName() const override {return "PhantomBoneBrainHorizontal";}
+    G4LogicalVolume * definePhantom(G4LogicalVolume * logicWorld) override;
+};
+
+class PhantomBoneBrainVertical : public PhantomModeBase
+{
+public:
+    std::string getTypeName() const override {return "PhantomBoneBrainVertical";}
+    G4LogicalVolume * definePhantom(G4LogicalVolume * logicWorld) override;
+};
 #endif // PhantomMode_h

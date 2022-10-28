@@ -148,7 +148,7 @@ G4LogicalVolume * PhantomCustomBox::definePhantom(G4LogicalVolume * logicWorld)
         }
         break;
     case Bone :
-        mat = man->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
+        mat = man->FindOrBuildMaterial("G4_BONE_CORTICAL_ICRP");
         break;
     case Brain :
         mat = man->FindOrBuildMaterial("G4_BRAIN_ICRP");
@@ -161,6 +161,9 @@ G4LogicalVolume * PhantomCustomBox::definePhantom(G4LogicalVolume * logicWorld)
         break;
     case Tissue :
         mat = man->FindOrBuildMaterial("G4_TISSUE_SOFT_ICRP");
+        break;
+    case Water :
+        mat = man->FindOrBuildMaterial("G4_WATER");
         break;
     default:;
     }
@@ -540,4 +543,51 @@ G4LogicalVolume * PhantomRT::definePhantom(G4LogicalVolume * logicWorld)
     */
 
     return logicPmma;
+}
+
+G4LogicalVolume * PhantomBoneBrainHorizontal::definePhantom(G4LogicalVolume * logicWorld)
+{
+    G4NistManager * man = G4NistManager::Instance();
+
+    //Bone
+    G4Material * matBone = man->FindOrBuildMaterial("G4_BONE_CORTICAL_ICRP");
+
+    //Brain
+    G4Material * matBrain = man->FindOrBuildMaterial("G4_BRAIN_ICRP");
+
+    G4Box * solidBone = new G4Box("Bone Region",100,50,100);
+    G4LogicalVolume * logicalBone = new G4LogicalVolume(solidBone, matBone, "Bone Region");
+    logicalBone->SetVisAttributes(G4VisAttributes({0, 0, 1}));
+    new G4PVPlacement(nullptr, {0, -50, 0}, logicalBone, "Bone Region", logicWorld, false, 0);
+
+    G4Box * solidBrain = new G4Box("Brain Region",100,50,100);
+    G4LogicalVolume * logicalBrain = new G4LogicalVolume(solidBrain, matBrain, "Brain Region");
+    logicalBrain->SetVisAttributes(G4VisAttributes({0, 0, 1}));
+    new G4PVPlacement(nullptr, {0, 50 , 0}, logicalBrain, "Brain Region", logicWorld, false, 0);
+
+    return logicalBone;
+}
+
+G4LogicalVolume * PhantomBoneBrainVertical::definePhantom(G4LogicalVolume * logicWorld)
+{
+
+    G4NistManager * man = G4NistManager::Instance();
+
+    //Bone
+    G4Material * matBone = man->FindOrBuildMaterial("G4_BONE_CORTICAL_ICRP");
+
+    //Brain
+    G4Material * matBrain = man->FindOrBuildMaterial("G4_BRAIN_ICRP");
+
+    G4Box * solidBone = new G4Box("Bone Region",100.0*mm,100.0*mm,50.0*mm);
+    G4LogicalVolume * logicalBone = new G4LogicalVolume(solidBone, matBone, "Bone Region");
+    logicalBone->SetVisAttributes(G4VisAttributes({0, 0, 1}));
+    new G4PVPlacement(nullptr, {0, 0, -50}, logicalBone, "Bone Region", logicWorld, false, 0);
+
+    G4Box * solidBrain = new G4Box("Brain Region",100.0*mm,100.0*mm,50.0*mm);
+    G4LogicalVolume * logicalBrain = new G4LogicalVolume(solidBrain, matBrain, "Brain Region");
+    logicalBrain->SetVisAttributes(G4VisAttributes({0, 0, 1}));
+    new G4PVPlacement(nullptr, {0, 0, 50}, logicalBrain, "Brain Region", logicWorld, false, 0);
+
+    return logicalBone;
 }

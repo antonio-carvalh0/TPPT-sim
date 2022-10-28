@@ -28,4 +28,15 @@ void AnnihilationLoggerTrackingAction::PostUserTrackingAction(const G4Track * tr
     SessionManager & SM = SessionManager::getInstance();
     AnnihilationLoggerMode * mode = static_cast<AnnihilationLoggerMode*>(SM.SimMode);
     mode->fillPosition(track->GetPosition());
+
+}
+
+void BoneBrainTrackingAction::PreUserTrackingAction(const G4Track *track)
+{
+
+}
+
+void BoneBrainTrackingAction::PostUserTrackingAction(const G4Track *track)
+{
+
 }

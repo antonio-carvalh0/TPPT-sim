@@ -152,6 +152,7 @@ void DetectorConstruction::defineMaterials()
 
     // Assigning materials to the detector components
     WorldMat        = matAir; // WorldMat        = matVacuum;
+    //WorldMat        = matWater;
     SM.ScintMat     = matLYSOCe;
     EncapsMat       = matTeflon;
     BaseMat         = matABS;
@@ -656,3 +657,4 @@ void DetectorConstruction::addCoolingAssemblies()
 
     new G4PVPlacement(0, {0, 0, 0}, logicWaterPipe, "WaterPipe_PV", logicCopperPipeHolder, false, 0);
 }
+

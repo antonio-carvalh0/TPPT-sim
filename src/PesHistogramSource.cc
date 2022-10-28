@@ -13,10 +13,19 @@
 #include <iostream>
 #include <fstream>
 
-PesHistogramSource::PesHistogramSource(const std::string & directory, double multiplier) :
-    SourceModeBase(nullptr, nullptr), Directory(directory), Multiplier(multiplier)
+PesHistogramSource::PesHistogramSource(int iso, const std::string & directory, double multiplier) :
+    SourceModeBase(nullptr, nullptr), Iso(iso), Directory(directory), Multiplier(multiplier)
 {
-    init();
+    Blur=0;
+    if(Iso==0) init();
+    else init2();
+}
+
+PesHistogramSource::PesHistogramSource(int iso, const std::string & directory, double multiplier, double blur) :
+    SourceModeBase(nullptr, nullptr),Iso(iso), Directory(directory), Multiplier(multiplier), Blur(blur)
+{
+    if(Iso==0) init();
+    else init2();
 }
 
 PesHistogramSource::PesHistogramSource(const json11::Json & json) :
@@ -33,6 +42,20 @@ void PesHistogramSource::init()
     IsotopeBase.push_back({ "C11", {"6_12_C11.txt", "8_16_C11.txt"} });
     IsotopeBase.push_back({ "O15", {"8_16_O15.txt"} });
     IsotopeBase.push_back({ "N13", {"8_16_N13.txt"} });
+
+    checkInputData();
+
+    CurrentRecord = 0;
+    CurrentFile = 0;
+
+    ParticleGun->SetParticleEnergy(0*keV);
+    ParticleGun->SetParticleMomentumDirection({0,0,1.0});
+}
+
+void PesHistogramSource::init2()
+{
+    IsotopeBase.push_back({ "P30", {"15_31_P30.txt"} });
+    IsotopeBase.push_back({ "K38", {"20_40_K38.txt"} });
 
     checkInputData();
 
@@ -94,9 +117,27 @@ void PesHistogramSource::GeneratePrimaries(G4Event * anEvent)
 
                 for (int iPart = 0; iPart < number; iPart++)
                 {
-                    const double x = binning.Origin[0] + (0.5 + ix) * binning.BinSize[0];
-                    const double y = binning.Origin[1] + (0.5 + iy) * binning.BinSize[1];
-                    const double z = binning.Origin[2] + (0.5 + iz) * binning.BinSize[2];
+                    double x;
+                    double y;
+                    double z;
+
+                    if (Blur == 0)
+                    {
+                        x = binning.Origin[0] + (0.5 + ix) * binning.BinSize[0];
+                        y = binning.Origin[1] + (0.5 + iy) * binning.BinSize[1];
+                        z = binning.Origin[2] + (0.5 + iz) * binning.BinSize[2];
+                    }
+                    else
+                    {
+                        const double xx = G4UniformRand()*binning.BinSize[0];
+                        const double yy = G4UniformRand()*binning.BinSize[1];
+                        const double zz = G4UniformRand()*binning.BinSize[2];
+
+                        x = binning.Origin[0] + xx + ix * binning.BinSize[0];
+                        y = binning.Origin[1] + yy + iy * binning.BinSize[1];
+                        z = binning.Origin[2] + zz + iz * binning.BinSize[2];
+                    }
+
                     ParticleGun->SetParticlePosition( {x,y,z} );
 
                     ParticleGun->SetParticleTime(G4UniformRand() * TimeSpan);
