@@ -14,7 +14,9 @@
 #include "AnnihilationLoggerMode.hh"
 #include "PesHistogramSource.hh"
 
-//ola
+
+#include "G4RandomTools.hh"
+
 #include <chrono>
 
 int main(int argc, char** argv)
@@ -44,7 +46,7 @@ int main(int argc, char** argv)
      // --- START of user init ---
 
         // General settings
-        SM.Seed               = 1000;
+        SM.Seed               = 1001;
         SM.SimAcollinearity   = true;  // only for the phantom region!
         SM.KillNeutrinos      = true;
         SM.UseStepLimiter     = true; SM.PhantomStepLimt = 1.0*mm;
@@ -59,8 +61,8 @@ int main(int argc, char** argv)
         //double timeFrom = 0;
         //double timeTo   = 1e-5*s;  // currently implemented only for the natural rad from LYSO!
 
-        SM.WorkingDirectory  = "/home/andr/WORK/TPPT/PESGen";
-        //SM.WorkingDirectory = "/data/margarida/Data";
+        SM.WorkingDirectory  = "/home/carvalho12/WORK/PESgen";
+
 
         SM.Verbose          = false;
         SM.Debug            = false;
@@ -68,7 +70,7 @@ int main(int argc, char** argv)
 
         // Phantom
         //SM.PhantomMode      = new PhantomNone;
-        SM.PhantomMode      = new PhantomPMMA;
+        //SM.PhantomMode      = new PhantomPMMA;
 //        SM.PhantomMode      = new PhantomEnergyCalibration;
         //SM.PhantomMode      = new PhantomParam;
         //SM.PhantomMode      = new PhantomDerenzo(200.0, 100.0, {1.8, 2.0, 2.2, 2.5, 3.0, 6.0}, 10.0, 5.0, 60.0);
@@ -80,6 +82,10 @@ int main(int argc, char** argv)
         //SM.PhantomMode      = new PhantomBauerGel();
         //SM.PhantomMode      = new PhantomCustomBox(90.0, 300.0, 90.0, PhantomCustomBox::PMMA);
         //SM.PhantomMode      = new PhantomCustomBox(90.0, 300.0, 90.0, PhantomCustomBox::Brain);
+        //SM.PhantomMode      = new PhantomCustomBox(201.0, 200.0, 201.0, PhantomCustomBox::Brain);
+        SM.PhantomMode      = new PhantomBoneBrainHorizontal;
+        //SM.PhantomMode      = new PhantomBoneBrainVertical;
+
 
         // Enabled detector components - it is also possible to use .set( {comp1, comp2, ...} )
         /*
@@ -92,6 +98,7 @@ int main(int argc, char** argv)
         SM.DetectorComposition.add(DetComp::CoolingAssemblies);
         */
 
+
             // Need special care using the following component - might be not cumulative
         //SM.DetectorComposition.add(DetComp::FirstStageMonitor);
             // Obsolete components
@@ -100,9 +107,9 @@ int main(int argc, char** argv)
         //SM.DetectorComposition.add(DetComp::Nozzle);
 
         // Source
-        //SM.SourceMode       = new MultiBeam(new Proton(), "/home/andr/WORK/TPPT/MultiBeam/BeamletData.txt", 10); // NomEnergy[MeV] XIso[mm] ZIso[mm] Time0[ns] TimeSpan[ns] StatWeight
+       //SM.SourceMode       = new MultiBeam(new Proton(), "/home/carvalho12/WORK/BeamData.txt", 1e5); // NomEnergy[MeV] XIso[mm] ZIso[mm] Time0[ns] TimeSpan[ns] StatWeight
         //SM.SourceMode       = new PencilBeam(new Geantino(), new ConstantTime(0), {0*mm, 0*mm, 3500.0*mm}, {0,0,-1.0});
-        SM.SourceMode       = new PencilBeam(new Proton(), new ConstantTime(0), {0*mm, 150.0*mm, 0*mm}, {0,-1.0,0});
+        //SM.SourceMode       = new PencilBeam(new Proton(), new ConstantTime(0), {0*mm, 150.0*mm, 0*mm}, {0,-1.0,0});
         //SM.SourceMode       = new PointSource(new GammaPair, new ExponentialTime(0, 2.034*60*s), {1.2, 2.3, 2});
         //SM.SourceMode       = new BlurredPointSource(new GammaPair, new ExponentialTime(0, 2.034*60*s), {0, 0, 0}, "/data/margarida/Data/AnnihilTest.txt");
         //SM.SourceMode       = new Na22point(0,1.0*s, {0, 0, 0});
@@ -114,17 +121,17 @@ int main(int argc, char** argv)
         //SM.SourceMode       = new FromFileSource("/home/andr/WORK/TPPT/FirstStage.bin", true);
         //SM.SourceMode       = new MaterialLimitedSource(new GammaPair, new UniformTime(0, 500.0*s), {0, 0, 0}, {200.0, 200.0, 200.0}, "G4_AIR");//, "derenzoLarge.txt");
         //SM.SourceMode       = new CylindricalSource(new GammaPair, new UniformTime(0, 500.0*s), 0.5*330, {0,0,-0.5*105}, {0,0,0.5*105});//, "testPos.txt" );
-//        SM.SourceMode       = new PesHistogramSource("/home/andr/WORK/TPPT/PESGen", 1000);
+        SM.SourceMode       = new PesHistogramSource(1,"/home/carvalho12/WORK/PESgen", 10000,0);
 
         // Simulation mode
         //SM.SimMode          = new SimModeGui();
         //SM.SimMode          = new SimModeTracing();
         //SM.SimMode          = new DoseExtractorMode(1e5, {1,1,1}, {121,120,121}, {-60.5, -60, -60.5}, "DoseEspana.txt");
         //SM.SimMode          = new SimModeMultipleEvents(1e6, "SimOutput1e6.bin", true);
-        SM.SimMode          = new PesGenerationMode(10000, "Pes.dat", false); // MC PES mode, number of protons = events * last argument in PencilBeam!
+        //SM.SimMode          = new PesGenerationMode(10000, "Pes.dat", false); // MC PES mode, number of protons = events * last argument in PencilBeam!
         //SM.SimMode          = new PesGenerationMode(SM.SourceMode->CountEvents(), "Pes.dat", false);
-//        SM.SimMode          = new PesProbabilityMode(1e5, {1.0, 1.0, 1.0}, {201, 201, 201}, {-100.5, -100, -100.5}, { {0, 1e10} });
-//        SM.SimMode          = new AnnihilationLoggerMode(SM.SourceMode->CountEvents(), {1.0, 1.0, 1.0}, {201, 201, 201}, {-100.5, -100, -100.5}, "test.txt");
+        //SM.SimMode          = new PesProbabilityMode(1e5, {1.0, 1.0, 1.0}, {201, 201, 201}, {-100.5, -100, -100.5}, { {0, 1e10} });
+        SM.SimMode          = new AnnihilationLoggerMode(SM.SourceMode->CountEvents(), {1.0, 1.0, 1.0}, {201, 201, 201}, {-100.5, -100, -100.5}, "test.txt");
 
     // --- END of user init ---
     }
